@@ -1,14 +1,16 @@
 # 🧾 Entware SSH Banner for (Keenetic / other Entware OS)
 
 Универсальный баннер для SSH с отображением состояния системы, пакетов Entware и сервисов с их состоянием.
+
 Объединяет наработки https://github.com/OMchik33/Keenetic-Entware-banner и https://github.com/byrekrut/custom-banner-ssh-Keenetic
+
 ## 📸 Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/2026-04-25_18-26-51.png" width="600"/>
+  <img src="https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/demo_banner.jpg" width="600"/>
 </p>
-📦 Репозиторий: [https://github.com/byrekrut/custom-banner-ssh-Keenetic](https://github.com/Nosferatus83/Entware-ssh-banner)
-https://github.com/OMchik33/Keenetic-Entware-banner
+📦 Репозиторий:https://github.com/Nosferatus83/Entware-ssh-banner
+
 ---
 
 ## 📁 Состав
