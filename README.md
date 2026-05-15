@@ -2,14 +2,15 @@
 
 Универсальный баннер для SSH с отображением состояния системы, пакетов Entware и сервисов с их состоянием.
 
-Объединяет наработки https://github.com/OMchik33/Keenetic-Entware-banner и https://github.com/byrekrut/custom-banner-ssh-Keenetic
+Подсмотрено у https://github.com/OMchik33/Keenetic-Entware-banner и https://github.com/byrekrut/custom-banner-ssh-Keenetic
+Но содержит гибкие параметры по определению сервисов в системе и их статусов
 
 ## 📸 Preview
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/demo_banner.jpg" width="600"/>
 </p>
-📦 Репозиторий:https://github.com/Nosferatus83/Entware-ssh-banner
+📦 Репозиторий: https://github.com/Nosferatus83/Entware-ssh-banner
 
 ---
 
@@ -17,15 +18,16 @@
 
 В репозитории:
 
-* `custom-banner.sh` — основной баннер
-* `setup_opkg_profile.sh` — установочный скрипт
+- `custom-banner.sh` — основной баннер
+- `install_banner.sh` — установочный скрипт
+- `banner.conf` — файл с конфигурацией для настройки точного определения Сервисов в системе и их статусов (при условии, что сервисы в /opt/etc/init.d реагируют на команду status)
 
 ---
 
 ## ⚡ Быстрая установка (1 команда)
 
 ```bash
-cd /opt/root && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/custom-banner.sh && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/setup_opkg_profile.sh && sh setup_opkg_profile.sh
+cd /opt/root && wget -q -O install_banner.sh https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/install_banner.sh && sh install_banner.sh -k
 ```
 
 ---
@@ -34,13 +36,13 @@ cd /opt/root && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-s
 
 Скрипт автоматически:
 
-* обновляет список пакетов (`opkg update`)
-* устанавливает зависимости:
-
-  * wget-ssl
-  * whiptail
-  * nano
-* настраивает автозапуск баннера через `~/.profile`
+- Устанавливает зависимости (`wget-ssl`, `whiptail`, `nano`).
+- Скачивает и настраивает `custom-banner.sh` и `banner.conf`.
+- Всегда **перезаписывает** `custom-banner.sh` (свежая версия из репозитория).
+- Для `banner.conf` реализована **гибкая логика** сохранения/перезаписи:
+  - Если файла нет – скачивает.
+  - Если есть – поведение зависит от переданных аргументов (см. ниже).
+- Настраивает `$HOME/.profile` для автоматического запуска баннера при входе по SSH.
 
 Добавляется:
 
@@ -48,6 +50,19 @@ cd /opt/root && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-s
 . /opt/etc/profile
 . /opt/root/custom-banner.sh
 ```
+
+- Выводит в лог текущие параметры конфига и инструкции по изменению.
+
+### ⚙️ Аргументы командной строки
+
+При запуске установщика можно указать один из ключей, управляющих поведением с `banner.conf`:
+
+| Аргумент           | Действие                                                 |
+| ------------------ | -------------------------------------------------------- |
+| `-f` или `--force` | Принудительно перезаписать существующий `banner.conf`.   |
+| `-k` или `--keep`  | Оставить существующий `banner.conf` (не перезаписывать). |
+| _без аргументов_   | Если терминал интерактивный – спросить пользователя.     |
+|                    | В неинтерактивном режиме (CI) – **не перезаписывать**.   |
 
 ---
 
@@ -65,14 +80,14 @@ cd /opt/root && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-s
 ~/.profile
 ```
 
-Если у тебя там были свои настройки — они будут удалены.
+Но делает бэкап исходного.
 
 ---
 
 ## ❌ Удаление
 
 ```bash
-rm -f /opt/root/custom-banner.sh
+rm -f /opt/root/custom-banner.sh && rm -f /opt/root/banner.conf
 ```
 
 И убрать из `~/.profile` строку:
@@ -83,9 +98,27 @@ rm -f /opt/root/custom-banner.sh
 
 ---
 
-## 🔧 Настройка
+## 📝 Настройка после установки
 
-Добавление своего сервиса (в процессе описания):
+Для удобства и точного определения сервисов и их статусов создан конфигурационный файл `banner.conf`. После установки вы можете отредактировать его по пути `/opt/root/banner.conf`:
+
+- `SERVICE_MAP` – отображаемые имена сервисов (формат `имя_скрипта1:отображаемоеИмя1,имя_скрипта2:отображаемоеИмя2,` В конце списка обязательно ЗАПЯТАЯ).
+- `PROC_MAP` – соответствие «имя скрипта» → «имя процесса» для `pidof`(формат `'имя_скрипта1:процесс1:имя_скрипта2:процесс2,` В конце списка обязательно ЗАПЯТАЯ).
+- `POSITIVE_KEYWORDS` – ключевые слова, означающие **запущен** (разделитель `|`).
+- `NEGATIVE_KEYWORDS` – ключевые слова, означающие **остановлен** (разделитель `|`).
+
+После изменений выполните `source ~/.profile` или перезайдите по SSH.
+
+## ❓ Часто задаваемые вопросы
+
+**Вопрос:** Как вручную добавить новый сервис в баннер?  
+**Ответ:** Добавьте его имя в `SERVICE_MAP` и `PROC_MAP` в файле `banner.conf`, затем перезапустите оболочку.
+
+**Вопрос:** Почему баннер не обновляется после изменения конфига?  
+**Ответ:** Убедитесь, что вы применили изменения командой `source ~/.profile`. При новом входе по SSH баннер автоматически перечитает конфиг.
+
+**Вопрос:** Можно ли отключить баннер временно?  
+**Ответ:** Да, закомментируйте строку `. /opt/root/custom-banner.sh` в файле `~/.profile`.
 
 ---
 
