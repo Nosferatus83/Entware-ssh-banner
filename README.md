@@ -1,13 +1,14 @@
-# 🧾 Custom SSH Banner (Keenetic / Entware)
+# 🧾 Entware SSH Banner for (Keenetic / other Entware OS)
 
-Лёгкий и информативный баннер для SSH с отображением состояния системы, пакетов Entware и сервисов.
+Универсальный баннер для SSH с отображением состояния системы, пакетов Entware и сервисов с их состоянием.
+Объединяет наработки https://github.com/OMchik33/Keenetic-Entware-banner и https://github.com/byrekrut/custom-banner-ssh-Keenetic
 ## 📸 Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/byrekrut/custom-banner-ssh-Keenetic/main/2026-04-25_18-26-51.png" width="600"/>
+  <img src="https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/2026-04-25_18-26-51.png" width="600"/>
 </p>
-📦 Репозиторий: https://github.com/byrekrut/custom-banner-ssh-Keenetic
-
+📦 Репозиторий: [https://github.com/byrekrut/custom-banner-ssh-Keenetic](https://github.com/Nosferatus83/Entware-ssh-banner)
+https://github.com/OMchik33/Keenetic-Entware-banner
 ---
 
 ## 📁 Состав
@@ -22,7 +23,7 @@
 ## ⚡ Быстрая установка (1 команда)
 
 ```bash
-cd /opt/root && wget -q https://raw.githubusercontent.com/byrekrut/custom-banner-ssh-Keenetic/main/custom-banner.sh && wget -q https://raw.githubusercontent.com/byrekrut/custom-banner-ssh-Keenetic/main/setup_opkg_profile.sh && sh setup_opkg_profile.sh
+cd /opt/root && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/custom-banner.sh && wget -q https://raw.githubusercontent.com/Nosferatus83/Entware-ssh-banner/main/setup_opkg_profile.sh && sh setup_opkg_profile.sh
 ```
 
 ---
@@ -54,23 +55,6 @@ cd /opt/root && wget -q https://raw.githubusercontent.com/byrekrut/custom-banner
 
 ---
 
-## 📋 Меню
-
-В баннере доступна команда:
-
-```bash
-menu
-```
-
-Позволяет:
-
-* обновить пакеты
-* обновить всё
-* посмотреть доступные обновления
-* перезапустить сервис
-
----
-
 ## ⚠️ Важно
 
 ❗ Установщик **перезаписывает файл**:
@@ -99,11 +83,7 @@ rm -f /opt/root/custom-banner.sh
 
 ## 🔧 Настройка
 
-Добавление своего сервиса:
-
-```bash
-check_service nginx nginx (пример) Добавлять в в соответствующий блок
-```
+Добавление своего сервиса (в процессе описания):
 
 ---
 
