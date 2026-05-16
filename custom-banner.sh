@@ -29,6 +29,37 @@ RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; WHITE='\033[1;37m'; BOLD='\033[1m'; DIM='\033[2m'
 RESET='\033[0m'
 
+# --- Универсальное получение uptime (дни, часы, минуты) ---
+get_uptime() {
+    # 1. Пробуем стандартный uptime -p (если поддерживается)
+    uptime_p=$(uptime -p 2>/dev/null)
+    if [ -n "$uptime_p" ]; then
+        echo "$uptime_p" | sed 's/^up //'
+        return
+    fi
+
+    # 2. Fallback: читаем /proc/uptime (есть на всех Linux)
+    if [ -r /proc/uptime ]; then
+        uptime_seconds=$(awk '{print int($1)}' /proc/uptime 2>/dev/null)
+        if [ -n "$uptime_seconds" ] && [ "$uptime_seconds" -gt 0 ]; then
+            days=$((uptime_seconds / 86400))
+            hours=$(((uptime_seconds % 86400) / 3600))
+            minutes=$(((uptime_seconds % 3600) / 60))
+            if [ $days -gt 0 ]; then
+                echo "${days} days, ${hours} hours, ${minutes} minutes"
+            elif [ $hours -gt 0 ]; then
+                echo "${hours} hours, ${minutes} minutes"
+            else
+                echo "${minutes} minutes"
+            fi
+            return
+        fi
+    fi
+
+    # 3. Всё сломалось
+    echo "unknown"
+}
+
 # Поиск значения по ключу в строке "key:value,key2:value2,..."
 map_lookup() {
     _map="$1"
@@ -173,11 +204,14 @@ print_system_info() {
 
     # External IP (таймаут 2 сек)
     EXT_IP="$(curl -s --max-time 2 https://ipinfo.io/ip 2>/dev/null || echo 'N/A')"
+    
+    # Uptime (универсальный)
+    uptime_str=$(get_uptime)
 
     # Вывод (сохранён оригинальный формат)
     printf "${WHITE} │  ${wht} %-10s ${ylw} %-30s ${wht} %-10s ${ylw}    %-30s ${clr}\n" \
         "Date:" "📆$(date)" \
-        "Uptime:" "🕐 $(uptime -p 2>/dev/null || echo 'unknown')"
+        "Uptime:" "🕐 ${uptime_str}"
     printf "${WHITE} │  ${wht} %-10s ${blu} %-30s ${wht} %-10s ${blu}  %-30s ${clr}\n" \
         "Router:" "$(ndmc -c "show version" 2>/dev/null | awk -F": " '/model/ {print $2}')" \
         "Accessed IP:" "$EXT_IP"
@@ -187,6 +221,13 @@ print_system_info() {
     printf "${WHITE} │  ${wht} %-10s ${grn} %-30s ${wht} %-10s ${grn} %-30s ${clr}\n" \
         "Kernel:" "$(uname -r)" \
         "Architecture:" "$(uname -m)"
+    temp_raw=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+    if [ -n "$temp_raw" ] && [ "$temp_raw" -gt 0 ] 2>/dev/null; then
+        temp=$((temp_raw / 1000))
+        printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" "CPU Temp:" "${temp}°C"
+    else
+        printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" "CPU Temp:" "N/A"
+    fi
     printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" \
         "CPU Temp:" "$(($(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null) / 1000))°C"
     printf "${WHITE} │  ${wht} %-10s ${pur} %-30s ${clr}\n" \

@@ -36,7 +36,7 @@ cd /opt/root && wget -q -O install_banner.sh https://raw.githubusercontent.com/N
 
 Скрипт автоматически:
 
-- Устанавливает зависимости (`wget-ssl`, `whiptail`, `nano`).
+- Устанавливает зависимости (`wget-ssl` и `whiptail`).
 - Скачивает и настраивает `custom-banner.sh` и `banner.conf`.
 - Всегда **перезаписывает** `custom-banner.sh` (свежая версия из репозитория).
 - Для `banner.conf` реализована **гибкая логика** сохранения/перезаписи:

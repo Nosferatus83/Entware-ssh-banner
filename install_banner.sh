@@ -48,7 +48,7 @@ echo -e "${GREEN}==> Установка SSH-баннера для Entware${NC}"
 echo -e "\n${YELLOW}[1/5] Установка зависимостей...${NC}"
 opkg update >/dev/null 2>&1
 
-for pkg in wget-ssl whiptail nano; do
+for pkg in wget-ssl whiptail; do
     if opkg list-installed | grep -q "^$pkg -"; then
         echo "  ✓ $pkg уже установлен"
     else
