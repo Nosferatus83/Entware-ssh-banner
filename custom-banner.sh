@@ -229,7 +229,6 @@ print_system_info() {
         printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" "CPU Temp:" "N/A"
     fi
     printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" \
-        "CPU Temp:" "$(($(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null) / 1000))°C"
     printf "${WHITE} │  ${wht} %-10s ${pur} %-30s ${clr}\n" \
         "USB Disk:" "$(df -h | grep '/opt' | awk '{print $2" (size) / "$3" (used) / "$4" (free) / "$5" (used %) : 💾 "$6}')"
     printf "${WHITE} │  ${wht} %-10s ${pur} %-30s ${clr}\n" \
