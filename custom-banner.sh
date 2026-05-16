@@ -211,7 +211,7 @@ print_system_info() {
     # Вывод (сохранён оригинальный формат)
     printf "${WHITE} │  ${wht} %-10s ${ylw} %-30s ${wht} %-10s ${ylw}    %-30s ${clr}\n" \
         "Date:" "📆$(date)" \
-        "Uptime:" "🕐 $(uptime -p 2>/dev/null || echo 'unknown')"
+        "Uptime:" "🕐 ${uptime_str}"
     printf "${WHITE} │  ${wht} %-10s ${blu} %-30s ${wht} %-10s ${blu}  %-30s ${clr}\n" \
         "Router:" "$(ndmc -c "show version" 2>/dev/null | awk -F": " '/model/ {print $2}')" \
         "Accessed IP:" "$EXT_IP"
