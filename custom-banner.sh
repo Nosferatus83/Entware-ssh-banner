@@ -211,7 +211,7 @@ print_system_info() {
     # Вывод (сохранён оригинальный формат)
     printf "${WHITE} │  ${wht} %-10s ${ylw} %-30s ${wht} %-10s ${ylw}    %-30s ${clr}\n" \
         "Date:" "📆$(date)" \
-        "Uptime:" "🕐 ${uptime_str}"
+        "Uptime:" "🕐 $(uptime -p 2>/dev/null || echo 'unknown')"
     printf "${WHITE} │  ${wht} %-10s ${blu} %-30s ${wht} %-10s ${blu}  %-30s ${clr}\n" \
         "Router:" "$(ndmc -c "show version" 2>/dev/null | awk -F": " '/model/ {print $2}')" \
         "Accessed IP:" "$EXT_IP"
@@ -228,7 +228,8 @@ print_system_info() {
     else
         printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" "CPU Temp:" "N/A"
     fi
-    printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" \
+#    printf "${WHITE} │  ${wht} %-10s ${red} %-30s ${wht}\n" \
+#       "CPU Temp:" "$(($(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null) / 1000))°C"
     printf "${WHITE} │  ${wht} %-10s ${pur} %-30s ${clr}\n" \
         "USB Disk:" "$(df -h | grep '/opt' | awk '{print $2" (size) / "$3" (used) / "$4" (free) / "$5" (used %) : 💾 "$6}')"
     printf "${WHITE} │  ${wht} %-10s ${pur} %-30s ${clr}\n" \
